@@ -1,5 +1,9 @@
+import os
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from PyPDF2 import PdfReader
+import pytesseract
+from PIL import Image
 
 from .models import pdf
 
@@ -12,11 +16,34 @@ def home(request):
 # Create your views here.
 def upload(request):
     context = {}
+    pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
     if request.method == 'POST':
         upload_file = request.FILES['document']
+
+        # Upload file to server
         fs =  FileSystemStorage()
         name = fs.save(upload_file.name, upload_file)
         context['url'] = fs.url(name)
-        pdf.objects.create(title=name, content='', pdf=context['url'])
+
+        # Extract text from pdf
+        pdfFileObj = open(os.path.join(fs.base_location, upload_file.name), 'rb')
+        pdf = PdfReader(pdfFileObj)
+        text = ""
+        for page in pdf.pages:
+            page_images = page.images
+            for image in page_images:
+                image_data = image.data
+                with open("image.jpg","wb") as f:
+                    f.write(image_data)
+
+                    image = Image.open("image.jpg")
+                    text = pytesseract.image_to_string(image)
+                    text += text
+                    f.close()
+                    os.remove("image.jpg") 
+        print("Content of PDF : ----> " + text)
+
+        # TODO: error section not able to save data to database 
+        # pdf.objects.create(title=name, content="Hello", pdf=context['url'])
     return render(request, 'upload.html', context)
 
