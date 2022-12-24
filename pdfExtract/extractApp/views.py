@@ -16,7 +16,7 @@ def home(request):
 # Create your views here.
 def upload(request):
     context = {}
-    pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
     if request.method == 'POST':
         upload_file = request.FILES['document']
 
@@ -27,9 +27,9 @@ def upload(request):
 
         # Extract text from pdf
         pdfFileObj = open(os.path.join(fs.base_location, upload_file.name), 'rb')
-        pdf = PdfReader(pdfFileObj)
+        pdf_read = PdfReader(pdfFileObj)
         text = ""
-        for page in pdf.pages:
+        for page in pdf_read.pages:
             page_images = page.images
             for image in page_images:
                 image_data = image.data
@@ -43,7 +43,6 @@ def upload(request):
                     os.remove("image.jpg") 
         print("Content of PDF : ----> " + text)
 
-        # TODO: error section not able to save data to database 
-        # pdf.objects.create(title=name, content="Hello", pdf=context['url'])
+        pdf.objects.create(title=name, content=text, pdf=context['url'])
     return render(request, 'upload.html', context)
 
