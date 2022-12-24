@@ -23,7 +23,14 @@ python .\manage.py runserver
 3. Basic function to upload PDF file and save.
 4. Extraction data from image in pdf.
    1. The package used for this Tesseract for text extraction from image.
-5. Text save in text mode in database and all the content are showed in list view in the home page.   
+5. Text save in text mode in database and all the content are showed in list view in the home page.
+
+### Issue
+
+The current issue with the project is that it is just a prototype so the text extraction is not proper and does not work with images that are hand written.
+
+Functionality wise the project works But in case of production the OCR tool **need to be changed**. 
+
  ***
 ### Project Demo
 
